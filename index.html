@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" /><meta
+    name="theme-color"
+    content="#6951db"
+  /><title>Cipher Club — Secret Agent Academy</title
+  ><meta
+    name="description"
+    content="A friendly codebreaking game for kids: crack Caesar, Atbash and Pigpen secret messages solo or with a friend."
+  /><link
+    rel="icon"
+    href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%F0%9F%95%B5%EF%B8%8F%3C/text%3E%3C/svg%3E"
+  /><link rel="stylesheet" href="style.css" />
+  <header>
+    <a href="./" class="brand"
+      >✦ <span>CIPHER<br /><b>CLUB</b></span></a
+    ><span class="academy">SECRET AGENT ACADEMY</span
+    ><button id="home" class="small">⌂ Home</button>
+  </header>
+  <main>
+    <section id="welcome" class="screen">
+      <div class="intro">
+        <span class="badge">YOUR NEXT MISSION STARTS HERE</span>
+        <h1>Ready to<br /><em>crack the code?</em></h1>
+        <p>Secret messages. Sneaky symbols.<br />One brilliant codebreaker. You.</p>
+        <div class="modes">
+          <button id="solo" class="mode purple">
+            <span class="icon">⚡</span
+            ><span><strong>Play on my own</strong><small>Crack a mystery message</small></span
+            ><b>→</b></button
+          ><button id="friends" class="mode cream">
+            <span class="icon">🤝</span
+            ><span><strong>Play with a friend</strong><small>Make a code. Swap turns.</small></span
+            ><b>→</b>
+          </button>
+        </div>
+        <div class="tiny" id="cracked">No rush. Help is always here.</div>
+      </div>
+      <div class="art" aria-hidden="true">
+        <div class="orbit"></div>
+        <span class="float star">✦</span><span class="float question">?</span>
+        <div class="robot">
+          <div class="antenna"></div>
+          <div class="face">
+            <div class="visor"><i></i><i></i></div>
+            <div class="smile"></div>
+          </div>
+          <div class="bodybot">★</div>
+        </div>
+        <div class="secret">TOP SECRET<br /><b>K H O O R</b><span>CAN YOU CRACK IT?</span></div>
+        <div class="pill">🔎 Codebreakers wanted!</div>
+      </div>
+    </section>
+    <section id="choose" class="screen hidden">
+      <div class="step">MISSION SETUP · 1 OF 2</div>
+      <h1>Pick your <em>code.</em></h1>
+      <p>Three ways to hide a message. Which will you try?</p>
+      <div class="ciphercards">
+        <button data-c="caesar" class="tile">
+          <span class="tileicon">A → D</span><strong>Caesar</strong
+          ><span>Slide the letters along.</span><small>A becomes D</small><b>Choose →</b></button
+        ><button data-c="atbash" class="tile pink">
+          <span class="tileicon">A ↔ Z</span><strong>Atbash</strong
+          ><span>Flip the alphabet around.</span><small>A becomes Z</small><b>Choose →</b></button
+        ><button data-c="pigpen" class="tile mint">
+          <span class="tileicon">⌑ ⋄ ⊔</span><strong>Pigpen</strong
+          ><span>Turn letters into symbols.</span><small>Use the secret symbol key</small
+          ><b>Choose →</b>
+        </button>
+      </div>
+      <button class="textbtn" data-back="welcome">← Go back</button>
+    </section>
+    <section id="setup" class="screen hidden narrow">
+      <div class="step">MISSION SETUP · 2 OF 2</div>
+      <h1 id="setupTitle">Make it <em>secret.</em></h1>
+      <div class="box">
+        <span class="badge" id="chosen"></span>
+        <p id="writer" class="writer"></p>
+        <div id="messageBox">
+          <label for="message">Write your secret message</label
+          ><textarea
+            id="message"
+            maxlength="100"
+            placeholder="Try a word like DRAGON…"
+            autocomplete="off"
+          ></textarea>
+          <p class="helper">Start with a short word or sentence. Keep it friendly!</p>
+        </div>
+        <div id="soloTip" class="tip hidden">🔎 A mystery message is waiting for you.</div>
+        <label for="timer">How would you like to play?</label
+        ><select id="timer">
+          <option value="0">🌱 Take my time · stopwatch</option>
+          <option value="120">⚡ Beat the clock · 2 minutes</option>
+          <option value="300">⏱ Beat the clock · 5 minutes</option>
+        </select>
+        <details>
+          <summary>Extra options</summary>
+          <div id="names">
+            <label for="p1">Player 1 nickname</label
+            ><input id="p1" maxlength="16" value="Player 1" /><label for="p2"
+              >Player 2 nickname</label
+            ><input id="p2" maxlength="16" value="Player 2" />
+          </div>
+          <div id="shiftbox">
+            <label for="shift">Move letters by</label
+            ><select id="shift"></select>
+          </div>
+          <label for="spaces"
+            ><input id="spaces" type="checkbox" /> Extra challenge: hide word spaces</label
+          >
+        </details>
+        <div id="error" role="status"></div>
+        <button id="create" class="primary wide">Seal my message →</button>
+      </div>
+      <button class="textbtn" data-back="choose">← Change code</button>
+    </section>
+    <section id="handoff" class="screen hidden narrow centred">
+      <div class="bigicon">✉️</div>
+      <span class="badge">MESSAGE LOCKED!</span>
+      <h1 id="handoffTitle"></h1>
+      <p>Your secret is hidden.<br />Pass the device, then press Start.</p>
+      <button id="start" class="primary">Start decoding →</button>
+    </section>
+    <section id="play" class="screen hidden narrow">
+      <div class="playtop">
+        <span id="label" class="badge"></span><span id="clock" class="clock">00:00</span>
+      </div>
+      <h1>Crack <em>the code!</em></h1>
+      <p id="clue"></p>
+      <div id="code" class="code" aria-label="Secret message"></div>
+      <form id="form" class="box">
+        <label for="answer">What does the message say?</label
+        ><input
+          id="answer"
+          autocomplete="off"
+          spellcheck="false"
+          placeholder="Type your answer here…"
+        />
+        <div id="feedback" class="feedback" role="status" aria-live="polite"></div>
+        <button class="primary wide">Check my answer ✓</button>
+      </form>
+      <div class="helps">
+        <button id="keyButton" class="small" aria-controls="key" aria-expanded="false">
+          🗝 Show code key</button
+        ><button id="hint" class="small">💡 Give me a clue</button>
+      </div>
+      <div id="key" class="box hidden"></div>
+      <div id="hintText" class="tip hidden" role="status"></div>
+      <button id="finish" class="textbtn">Finish & see the answer</button>
+    </section>
+    <section id="result" class="screen hidden narrow centred">
+      <div class="bigicon" id="resultIcon">🌟</div>
+      <span class="badge">MISSION REPORT</span>
+      <h1 id="resultTitle"></h1>
+      <p id="resultMessage"></p>
+      <div class="box">
+        <span class="step">THE SECRET MESSAGE WAS</span>
+        <h2 id="solution"></h2>
+        <p id="stats"></p>
+        <div id="scoreboard"></div>
+      </div>
+      <button id="again" class="primary wide">Next mission →</button
+      ><button class="textbtn" data-back="welcome">Back to home</button>
+    </section>
+    <footer>✦ A little curiosity. A little practice. A new skill.</footer>
+  </main>
+  <script src="ciphers.js"></script>
+  <script src="app.js"></script>
+</html>
