@@ -136,6 +136,7 @@ $("create").onclick = () => {
   if (mode === "solo") start();
   else {
     $("handoffTitle").textContent = "Your turn, " + names[round.player] + "!";
+    $("handoffRule").textContent = clueRule(round.limit);
     show("handoff");
   }
 };
@@ -157,9 +158,24 @@ function renderCode() {
   });
 }
 
+// Elapsed time plus clue penalties: adds to a stopwatch, eats into a countdown.
 function seconds() {
-  return Math.max(0, Math.floor((Date.now() - round.started) / 1000));
+  return Math.max(0, Math.floor((Date.now() - round.started) / 1000)) + round.penalty;
 }
+
+function clueRule(limit) {
+  return limit
+    ? "⏱ Clues cost time: the 1st clue takes 5 seconds off your clock, the 2nd takes 10, and every clue after that takes 15."
+    : "◷ Clues cost time: the 1st clue adds 5 seconds to your time, the 2nd adds 10, and every clue after that adds 15.";
+}
+
+function updateHintButton() {
+  const cost = hintCost(round.hints + 1);
+  $("hint").textContent = `💡 Give me a clue (${round.limit ? "−" : "+"}${cost}s)`;
+}
+
+$("timer").onchange = () => ($("clueRule").textContent = clueRule(+$("timer").value));
+$("clueRule").textContent = clueRule(+$("timer").value);
 
 function clock() {
   const t = round.limit ? Math.max(0, round.limit - seconds()) : seconds();
@@ -174,7 +190,15 @@ function clock() {
 
 function start() {
   clearInterval(tick);
-  Object.assign(round, { started: Date.now(), done: false, won: false, revealed: [], hints: 0 });
+  Object.assign(round, {
+    started: Date.now(),
+    done: false,
+    won: false,
+    revealed: [],
+    hints: 0,
+    penalty: 0,
+  });
+  updateHintButton();
   $("label").textContent = round.cipher.toUpperCase() + " MISSION";
   $("clue").textContent =
     (round.cipher === "caesar"
@@ -249,11 +273,25 @@ $("hint").onclick = () => {
   // Reveal a random letter rather than always the first one, so clues feel less like a spoiler.
   round.revealed.push(left[Math.floor(Math.random() * left.length)]);
   round.hints++;
+  const cost = hintCost(round.hints);
+  round.penalty += cost;
   $("hintText").classList.remove("hidden");
-  $("hintText").textContent =
-    "A little help: " +
-    chars.map((c, i) => (ABC.includes(c) && !round.revealed.includes(i) ? "_" : c)).join(" ");
+  $("hintText").textContent = `A little help (${round.limit ? "−" : "+"}${cost} seconds): `;
+  // Group letters into words so the clue keeps the same spacing as the secret message.
+  const masked = chars
+    .map((c, i) => (ABC.includes(c) && !round.revealed.includes(i) ? "_" : c))
+    .join("");
+  const words = document.createElement("span");
+  words.className = "hintwords";
+  (round.hideSpaces ? [masked.replace(/ /g, "")] : masked.split(" ")).forEach((w) => {
+    const el = document.createElement("span");
+    el.textContent = [...w].join(" ");
+    words.append(el);
+  });
+  $("hintText").append(words);
+  updateHintButton();
   if (left.length === 1) $("hint").disabled = true;
+  clock();
 };
 
 function finish(won, timeout = false) {
@@ -274,7 +312,14 @@ function finish(won, timeout = false) {
       : "Have a look at the answer. Every try helps you learn.";
   $("solution").textContent = round.text;
   $("stats").textContent =
-    seconds() + " seconds · " + round.hints + " clue" + (round.hints === 1 ? "" : "s") + " used";
+    seconds() +
+    " seconds" +
+    (round.penalty ? ` (including ${round.penalty}s for clues)` : "") +
+    " · " +
+    round.hints +
+    " clue" +
+    (round.hints === 1 ? "" : "s") +
+    " used";
   $("scoreboard").replaceChildren();
   if (won) {
     cracked++;
@@ -306,8 +351,13 @@ $("again").onclick = () => {
   start();
 };
 
-$("home").onclick = () => {
+function goHome(e) {
+  // The logo is a link; stay in the app instead of reloading (which would wipe scores).
+  e?.preventDefault();
   if (round && !round.done && !confirm("Leave this mission and go home?")) return;
   stopRound();
   show("welcome");
-};
+}
+
+$("home").onclick = goHome;
+document.querySelector(".brand").onclick = goHome;

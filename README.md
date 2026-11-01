@@ -9,7 +9,7 @@ A child-friendly codebreaking game. Crack secret messages written in **Caesar**,
 - **Play on my own** – pick a cipher and crack a mystery message.
 - **Play with a friend** – one player writes a secret message, passes the device, and the other cracks it. Players swap turns and collect stars.
 - Choose a relaxed stopwatch or beat-the-clock timer (2 or 5 minutes).
-- Stuck? Open the code key, or ask for a clue to reveal one letter.
+- Stuck? Open the code key, or ask for a clue to reveal one letter. Clues cost time: the 1st costs 5 seconds, the 2nd 10, and every one after that 15 — added to your stopwatch, or taken off your countdown.
 - Wrong answers tell you how many letters are already in the right spot.
 - Extra challenge: hide the spaces between words.
 

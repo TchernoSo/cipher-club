@@ -27,6 +27,11 @@ function lettersRight(guess, answer) {
   return right;
 }
 
+// Seconds a clue costs: 1st = 5, 2nd = 10, every one after = 15.
+function hintCost(n) {
+  return n === 1 ? 5 : n === 2 ? 10 : 15;
+}
+
 // Pigpen: A–I plain grid, J–R dotted grid, S–V plain X, W–Z dotted X.
 function pig(ch) {
   let n = ABC.indexOf(ch);
@@ -55,4 +60,4 @@ function pig(ch) {
 }
 
 if (typeof module !== "undefined")
-  module.exports = { ABC, encode, decode, normal, lettersRight, pig };
+  module.exports = { ABC, encode, decode, normal, lettersRight, hintCost, pig };

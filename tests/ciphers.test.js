@@ -1,6 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert");
-const { ABC, encode, decode, normal, lettersRight, pig } = require("../ciphers.js");
+const { ABC, encode, decode, normal, lettersRight, hintCost, pig } = require("../ciphers.js");
 
 test("caesar shifts letters and wraps around", () => {
   assert.strictEqual(encode("HELLO", "caesar", 3), "KHOOR");
@@ -26,4 +26,8 @@ test("pigpen gives every letter a unique symbol", () => {
   const symbols = new Set([...ABC].map(pig));
   assert.strictEqual(symbols.size, 26);
   assert.strictEqual(pig("1"), "");
+});
+
+test("clues cost 5, then 10, then 15 seconds each", () => {
+  assert.deepStrictEqual([1, 2, 3, 4, 5].map(hintCost), [5, 10, 15, 15, 15]);
 });
